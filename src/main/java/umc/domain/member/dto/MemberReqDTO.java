@@ -17,7 +17,7 @@ public class MemberReqDTO {
     ){}
 
     public record SignUpReq(
-            List<Integer> agreedTermsIds,
+            List<Long> agreedTermsIds,
             @NotBlank
             String name,
             @NotNull
