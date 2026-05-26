@@ -7,19 +7,20 @@ import org.springframework.stereotype.Service;
 import umc.domain.member.converter.MemberConverter;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
+import umc.domain.member.entity.Food;
 import umc.domain.member.entity.Member;
 import umc.domain.member.entity.Term;
+import umc.domain.member.entity.mapping.MemberFood;
 import umc.domain.member.entity.mapping.MemberTerm;
+import umc.domain.member.exception.FoodException;
 import umc.domain.member.exception.MemberException;
 import umc.domain.member.exception.TermException;
+import umc.domain.member.exception.code.FoodErrorCode;
 import umc.domain.member.exception.code.MemberErrorCode;
 import umc.domain.member.exception.code.TermErrorCode;
-import umc.domain.member.repository.MemberRepository;
-import umc.domain.member.repository.MemberTermRepository;
-import umc.domain.member.repository.TermRepository;
+import umc.domain.member.repository.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,8 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TermRepository termRepository;
     private final MemberTermRepository memberTermRepository;
+    private final FoodRepository foodRepository;
+    private final MemberFoodRepository memberFoodRepository;
 
     public MemberResDTO.MyPageResDTO getInfo(MemberReqDTO.MyPageReqDTO dto) {
         Long memberId = dto.id();
@@ -66,7 +69,7 @@ public class MemberService {
         }
 
         //필수 정책 id 목록
-        List<Long> requiredTermId = termRepository.findAllByIsRequired(true)
+        List<Long> requiredTermId = termRepository.findAllByRequired(true)
                 .stream()
                 .map(Term::getId)
                 .toList();
@@ -76,11 +79,17 @@ public class MemberService {
             throw new TermException(TermErrorCode.REQUIRED_TERM_NOT_AGREED);
         }
 
+        //선호 음식 검증
+        List<Long> validFoodId = foodRepository.findAllIds();
+        if (!validFoodId.containsAll(dto.userFood())) {
+            throw new FoodException(FoodErrorCode.INVALID_FOOD_ID);
+        }
+
         //비밀 번호 암호화
         String encodedPassword = bCryptPasswordEncoder.encode(dto.password());
 
+        //사용자 db에 저장
         Member newMember = MemberConverter.toMemberEntity(dto, encodedPassword);
-
         Member savedMember = memberRepository.save(newMember);
 
         //사용자 정책 db에 저장
@@ -97,6 +106,21 @@ public class MemberService {
                 }).toList();
 
         memberTermRepository.saveAll(memberTermList);
+
+        //선호 음식 db에 저장
+        List<MemberFood> memberFoodList = dto.userFood()
+                .stream()
+                .map( foodId -> {
+                    Food food = foodRepository.findById(foodId)
+                            .orElseThrow(() -> new FoodException(FoodErrorCode.INVALID_FOOD_ID));
+
+                    return MemberFood.builder()
+                            .member(newMember)
+                            .food(food)
+                            .build();
+                }).toList();
+
+        memberFoodRepository.saveAll(memberFoodList);
 
         return MemberConverter.toSignUpRes(savedMember);
     }
