@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import umc.domain.member.converter.MemberConverter;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
@@ -33,6 +34,7 @@ public class MemberService {
     private final FoodRepository foodRepository;
     private final MemberFoodRepository memberFoodRepository;
 
+    @Transactional(readOnly = true)
     public MemberResDTO.MyPageResDTO getInfo(MemberReqDTO.MyPageReqDTO dto) {
         Long memberId = dto.id();
         Member member = memberRepository.findById(memberId).orElseThrow(
@@ -42,6 +44,7 @@ public class MemberService {
         return MemberConverter.toGetInfo(member);
     }
 
+    @Transactional(readOnly = true)
     public MemberResDTO.PointResDTO getPoint(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
                 ()->new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
@@ -50,6 +53,7 @@ public class MemberService {
         return MemberConverter.toGetPoint(member);
     }
 
+    @Transactional
     public MemberResDTO.SignUpRes signUp(MemberReqDTO.@Valid SignUpReq dto) {
 
         //이메일 중복 검증

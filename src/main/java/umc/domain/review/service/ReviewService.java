@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import umc.domain.member.entity.Member;
 import umc.domain.member.exception.MemberException;
 import umc.domain.member.exception.code.MemberErrorCode;
@@ -29,6 +30,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
 
+    @Transactional
     public ReviewResDTO.CreateReviewRes createReview(Long memberId, Long storeId, ReviewReqDTO.CreateReviewReq req) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 ()->new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
