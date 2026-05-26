@@ -11,6 +11,7 @@ import umc.domain.member.exception.code.MemberSuccessCode;
 import umc.global.apiPayload.ApiResponse;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class HomeController {
@@ -20,8 +21,8 @@ public class HomeController {
     //홈 화면
     @GetMapping("/v1/home/{memberId}")
     public ApiResponse<HomeResDTO.HomeDTO> getHome(
-            @RequestParam(name = "region") @NotBlank @Validated String region,
-            @PathVariable @NotNull @Validated Long memberId
+            @RequestParam(name = "region") @NotBlank String region,
+            @PathVariable @NotNull Long memberId
     ){
         return ApiResponse.onSuccess(MemberSuccessCode.HOME_VIEW_SUCCESS, homeService.getHome(memberId, region));
     }
