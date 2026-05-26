@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import umc.domain.inquiry.entity.Inquiry;
 import umc.domain.member.entity.mapping.MemberFood;
 import umc.domain.member.entity.mapping.MemberTerm;
@@ -16,7 +14,6 @@ import umc.domain.mission.entity.mapping.MemberMission;
 import umc.global.entity.BaseEntity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +55,7 @@ public class Member extends BaseEntity {
     @Column(name = "point")
     private Integer point;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false,  unique = true)
     private String email;
 
     @Column(name ="password", nullable = false)
