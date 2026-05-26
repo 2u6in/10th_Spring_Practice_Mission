@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     //마이 페이지
-    @GetMapping("/v1/members/me")
+    @PostMapping("/v1/members/me")
     public ApiResponse<MemberResDTO.MyPageResDTO> getInfo(
             @RequestBody @Valid MemberReqDTO.MyPageReqDTO dto
     ){

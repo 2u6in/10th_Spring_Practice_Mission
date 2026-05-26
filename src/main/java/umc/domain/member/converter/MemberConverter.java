@@ -1,11 +1,13 @@
 package umc.domain.member.converter;
 
 import jakarta.validation.Valid;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
 import umc.domain.member.entity.Member;
 
 public class MemberConverter {
+
     public static MemberResDTO.MyPageResDTO toGetInfo(Member member) {
         return MemberResDTO.MyPageResDTO.builder()
                 .memberId(member.getId())
@@ -22,7 +24,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public static Member toMemberEntity(MemberReqDTO.@Valid SignUpReq dto) {
+    public static Member toMemberEntity(MemberReqDTO.@Valid SignUpReq dto, String encodedPassword) {
         return Member.builder()
                 .name(dto.name())
                 .gender(dto.gender())
@@ -30,7 +32,7 @@ public class MemberConverter {
                 .address(dto.address())
                 .phoneNumber(dto.phoneNumber())
                 .email(dto.email())
-                .password(dto.password())
+                .password(encodedPassword)
                 .point(0)
                 .build();
     }

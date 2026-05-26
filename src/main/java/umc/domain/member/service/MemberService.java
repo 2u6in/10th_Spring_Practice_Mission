@@ -2,10 +2,8 @@ package umc.domain.member.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import umc.domain.member.controller.MemberController;
 import umc.domain.member.converter.MemberConverter;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
@@ -44,11 +42,10 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.MEMBER_ALREADY_EXISTS);
         }
 
-        Member newMember = MemberConverter.toMemberEntity(dto);
+        String encodedPassword = bCryptPasswordEncoder.encode(dto.password());
 
-        newMember.changePassword(
-                bCryptPasswordEncoder.encode(dto.password())
-        );
+        Member newMember = MemberConverter.toMemberEntity(dto, encodedPassword);
+
 
         Member savedMember = memberRepository.save(newMember);
 
