@@ -22,7 +22,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     //리뷰 작성
-    @PostMapping("/v1/reviews/{storeId}/{memberId}")
+    @PostMapping("/v1/reviews/{storeId}")
     public ApiResponse<ReviewResDTO.CreateReviewRes> createReview(
             @AuthenticationPrincipal AuthMember member,
             @PathVariable @NotNull Long storeId,

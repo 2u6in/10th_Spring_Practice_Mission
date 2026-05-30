@@ -21,7 +21,7 @@ public class MissionController {
 
     private final MissionService missionService;
 
-    @GetMapping("/v1/missions/me/{memberId}")
+    @GetMapping("/v1/missions/me")
     public ApiResponse<PageResDTO.Pagination<MissionResDTO.MissionDTO>> getMissions(
             @AuthenticationPrincipal AuthMember member,
             @RequestParam boolean isCompleted,
@@ -32,7 +32,7 @@ public class MissionController {
         return ApiResponse.onSuccess(MissionSuccessCode.MISSION_LIST_GET_SUCCESS, missionService.getMissions(member, isCompleted, pageSize, pageNumber, sort));
     }
 
-    @PatchMapping("/v1/missions/{missionId}")
+    @PatchMapping("/v1/missions")
     public ApiResponse<MissionResDTO.MissionDTO> updateMission(
             @PathVariable @NotNull Long missionId,
             @RequestBody @Valid MissionReqDTO.MissionStatusUpdate req

@@ -29,7 +29,7 @@ public class MemberController {
     }
 
     //보유 포인트 조회
-    @GetMapping("/v1/members/me/points/{memberId}")
+    @GetMapping("/v1/members/me/points")
     public ApiResponse<MemberResDTO.PointResDTO> getPoint(
             @AuthenticationPrincipal AuthMember member
     ){
