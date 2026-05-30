@@ -48,12 +48,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberResDTO.PointResDTO getPoint(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(
-                ()->new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
-        );
-
-        return MemberConverter.toGetPoint(member);
+    public MemberResDTO.PointResDTO getPoint(AuthMember member) {
+        return MemberConverter.toGetPoint(member.getMember());
     }
 
     @Transactional

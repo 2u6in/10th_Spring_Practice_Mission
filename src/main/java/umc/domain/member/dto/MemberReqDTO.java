@@ -8,10 +8,11 @@ import java.util.List;
 
 public class MemberReqDTO {
 
-    public record MyPageReqDTO(
-            @NotNull
-            Long id
-    ){}
+    // id를 body로 받아서 조회 할 떄 사용
+//    public record MyPageReqDTO(
+//            @NotNull
+//            Long id
+//    ){}
 
     public record SignUpReq(
             @NotBlank

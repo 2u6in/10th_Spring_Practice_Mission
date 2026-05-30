@@ -31,9 +31,9 @@ public class MemberController {
     //보유 포인트 조회
     @GetMapping("/v1/members/me/points/{memberId}")
     public ApiResponse<MemberResDTO.PointResDTO> getPoint(
-            @RequestParam(name = "memberId") @Valid Long id
+            @AuthenticationPrincipal AuthMember member
     ){
-        return ApiResponse.onSuccess(GeneralSuccessCode.OK, memberService.getPoint(id));
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, memberService.getPoint(member));
     }
 
     //회원 가입
