@@ -41,4 +41,12 @@ public class MemberController {
     ){
         return ApiResponse.onSuccess(MemberSuccessCode.CREATED, memberService.signUp(dto));
     }
+
+    //로그인
+    @PostMapping("v1/auth/members/login")
+    public ApiResponse<MemberResDTO.LoginRes> login(
+            @RequestBody @Valid MemberReqDTO.LoginReq dto
+    ){
+        return ApiResponse.onSuccess(MemberSuccessCode.MEMBER_SUCCESS, memberService.login(dto));
+    }
 }

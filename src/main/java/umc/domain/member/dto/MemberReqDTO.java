@@ -1,8 +1,6 @@
 package umc.domain.member.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.*;
 import umc.domain.member.enums.Gender;
 
 import java.time.LocalDate;
@@ -16,7 +14,11 @@ public class MemberReqDTO {
     ){}
 
     public record SignUpReq(
-            List<Long> agreedTermsIds,
+            @NotBlank
+            @Email
+            String email,
+            @NotBlank
+            String password,
             @NotBlank
             String name,
             @NotNull
@@ -26,11 +28,17 @@ public class MemberReqDTO {
             LocalDate birth,
             @NotBlank
             String address,
+            @NotEmpty
+            List<Long> agreedTermsIds,
             List<Long> userFood,
+            String phoneNumber
+    ){}
+
+    public record LoginReq(
             @NotBlank
+            @Email
             String email,
             @NotBlank
-            String password,
-            String phoneNumber
+            String password
     ){}
 }

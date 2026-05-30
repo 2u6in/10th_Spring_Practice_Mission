@@ -2,6 +2,10 @@ package umc.domain.member.service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,8 @@ import umc.domain.member.exception.code.FoodErrorCode;
 import umc.domain.member.exception.code.MemberErrorCode;
 import umc.domain.member.exception.code.TermErrorCode;
 import umc.domain.member.repository.*;
+import umc.global.security.entity.AuthMember;
+import umc.global.security.util.JwtUtil;
 
 import java.util.List;
 
@@ -33,6 +39,8 @@ public class MemberService {
     private final MemberTermRepository memberTermRepository;
     private final FoodRepository foodRepository;
     private final MemberFoodRepository memberFoodRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Transactional(readOnly = true)
     public MemberResDTO.MyPageResDTO getInfo(MemberReqDTO.MyPageReqDTO dto) {
@@ -127,5 +135,29 @@ public class MemberService {
         memberFoodRepository.saveAll(memberFoodList);
 
         return MemberConverter.toSignUpRes(savedMember);
+    }
+
+    public MemberResDTO.LoginRes login(MemberReqDTO.@Valid LoginReq dto) {
+        try{
+
+            //인증 과정을 authenticationManager에게 넘김
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            dto.email(),
+                            dto.password()
+                    )
+            );
+
+            AuthMember authMember =  (AuthMember) authentication.getPrincipal();
+
+            String token = jwtUtil.createAccessToken(authMember);
+
+            return MemberResDTO.LoginRes.builder()
+                    .accessToken(token)
+                    .build();
+
+        } catch (AuthenticationException e){
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
     }
 }
