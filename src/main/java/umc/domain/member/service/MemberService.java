@@ -73,7 +73,7 @@ public class MemberService {
         }
 
         //필수 정책 id 목록
-        List<Long> requiredTermId = termRepository.findAllByRequired(true)
+        List<Long> requiredTermId = termRepository.findAllByIsRequired(true)
                 .stream()
                 .map(Term::getId)
                 .toList();
